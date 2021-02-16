@@ -225,7 +225,7 @@ function check_if_script_is_enabled() {
                        }
                     }
                 });
-            }, 500);
+            }, 1000);
         } else {
             clearInterval(interval);
         }
