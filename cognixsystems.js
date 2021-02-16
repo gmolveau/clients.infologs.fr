@@ -164,13 +164,15 @@ const infos = {
       "2301": "BOLLORE",
       "2303": "UDP"
     }
-  }};
+  }
+};
+
 const domain = window.location.hostname;
 const server_url = window.location.protocol + "//" + domain;
 const current_do = globalBody['selectedUserId'];
 
 function urlencoding(data) {
-    return url = Object.keys(data).map(function(k) { return encodeURIComponent(k) + '=' + encodeURIComponent(data[k]) }).join('&'); 
+    return url = Object.keys(data).map(function(k) { return encodeURIComponent(k) + '=' + encodeURIComponent(data[k]) }).join('&');
 }
 
 function create_labeled_input(type, name, value, label) {
@@ -211,19 +213,19 @@ function check_if_script_is_enabled() {
                     data: globalBody,
                     success: function(resp) {
                         if(resp.error) {
-                            console.log(new Date().toLocaleTimeString(), ": booking seems to be closed...");
+                            console.log(new Date().toLocaleTimeString(), ": booking seems to be closed... [error in response]");
                             return;
                         }
                         if (resp['quota'] !== undefined && resp['quota']['slot'][0]['value'] === 0) {
-                            console.log(new Date().toLocaleTimeString(), ": booking seems to be closed...");
+                            console.log(new Date().toLocaleTimeString(), ": booking seems to be closed... [0 quota]");
                             return;
                         }
                         else {
-                           reserve_slots(); 
+                           reserve_slots();
                        }
                     }
                 });
-            }, 2000);
+            }, 500);
         } else {
             clearInterval(interval);
         }
@@ -257,10 +259,10 @@ function check_if_timeslot_available(island_id, timeslot_id) {
         url: server_url + "/ajax-time-slot/display",
         data: globalBody,
         success: function(resp) {
-            if(resp.error) 
+            if(resp.error)
                 return;
             if (resp['quota'] !== undefined)
-                if(resp['quota']['slot'][0]['value'] === 0) 
+                if(resp['quota']['slot'][0]['value'] === 0)
                     return;
             let timeslot = resp.island[island_id]['slot'][timeslot_id];
             if (timeslot !== undefined) {
@@ -285,7 +287,9 @@ function ajax_prebook_timeslot(island_id, timeslot_id) {
     form.timeSlotId = timeslot_id;
     form.quantity = 0;
     form.bookingId = 0;
-    form.registration = $("input:text[name='script_chauffeur']").val() || "Jean-Marc";
+    form.registration = "1234"; // immatriculation
+    form.truckDriverName = $("input:text[name='script_chauffeur']").val() || "Jean-Marc"; // nom du chauffeur
+    form.authorizationNumber = "1234";
     $.ajax({
         type: "POST",
         url: server_url + "/ajax-booking/display",
